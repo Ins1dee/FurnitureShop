@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="EfCoreDialogsState">
+    <option name="keyValueStorage">
+      <map>
+        <entry key="Common:2f7accd4-f394-4906-b30a-54ac26f788a8:dbContext" value="FurnitureShop.Persistence.ApplicationDbContext" />
+        <entry key="Common:337455cc-147f-48cd-a228-879716dae88b:dbContext" value="FurnitureShop.Infrastructure.Database.ApplicationDbContext" />
+        <entry key="Common:buildConfiguration" value="Debug" />
+        <entry key="Common:noBuild" value="false" />
+        <entry key="Common:outputFolder" value="Migrations" />
+        <entry key="Common:useDefaultConnection" value="true" />
+      </map>
+    </option>
+  </component>
+</project>
