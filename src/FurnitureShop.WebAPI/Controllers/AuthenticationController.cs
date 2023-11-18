@@ -1,10 +1,10 @@
 using FurnitureShop.Application.Features.Users.Commands.Login;
 using FurnitureShop.Application.Features.Users.Commands.RefreshSession;
 using FurnitureShop.Domain.Shared;
-using FurnitureShop.WebAPI.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace FurnitureShop.WebAPI.Controllers;
 
@@ -21,14 +21,14 @@ public class AuthenticationController : Controller
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> LoginUser(
+    public async Task<IResult> LoginUser(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
         [FromBody] LoginUserRequest request,
         CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(requestId, out Guid parsedRequestId))
         {
-            return BadRequest();
+            return Results.BadRequest();
         }
         
         LoginUserCommand loginCommand = new(
@@ -38,18 +38,22 @@ public class AuthenticationController : Controller
 
         Result<LoginResponse> result = await _sender.Send(loginCommand, cancellationToken);
 
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.IsSuccess
+            ? Results.Json(result.Value, statusCode: (int)result.Status)
+            : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 
     [Authorize]
     [HttpPost]
     [Route("refresh-token")]
-    public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken)
+    public async Task<IResult> RefreshToken(CancellationToken cancellationToken)
     {
         RefreshSessionCommand refreshCommand = new();
 
         Result<RefreshSessionResponse> result = await _sender.Send(refreshCommand, cancellationToken);
         
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.IsSuccess 
+            ? Results.Json(result.Value, statusCode: (int)result.Status)
+            : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 }

@@ -1,4 +1,4 @@
-namespace FurnitureShop.WebAPI.Requests;
+namespace FurnitureShop.Application.Features.UserRegistrations.Commands.Create;
 
 public record RegisterUserRequest(
     string Firstname,

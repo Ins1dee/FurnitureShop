@@ -1,9 +1,10 @@
 namespace FurnitureShop.Application.Features.Products.Commands.Create;
 
-public record ProductResponse(
-    string Name, 
+public record CreateProductRequest(
+    string Name,
     string Description,
-    string Brand,
+    string BrandCompany,
+    string BrandCountry,
     double Price,
     double Width,
     double Height,

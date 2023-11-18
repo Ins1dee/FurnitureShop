@@ -67,7 +67,7 @@ public sealed class User : Entity<UserId>, IAggregateRoot
     {
         if (refreshToken is null)
         {
-            return Result.Failure<RefreshSession>(DomainErrors.User.RefreshSessionExpired());
+            return Result.BadRequest<RefreshSession>(DomainErrors.User.RefreshSessionExpired());
         }
         
         RefreshSession? refreshSession = _refreshSessions
@@ -75,7 +75,7 @@ public sealed class User : Entity<UserId>, IAggregateRoot
 
         if (refreshSession is null)
         {
-            return Result.Failure<RefreshSession>(DomainErrors.User.InvalidRefreshToken());
+            return Result.BadRequest<RefreshSession>(DomainErrors.User.InvalidRefreshToken());
         }
 
         _refreshSessions.Remove(refreshSession);

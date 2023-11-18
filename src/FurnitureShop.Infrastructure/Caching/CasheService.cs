@@ -1,9 +1,10 @@
+using FurnitureShop.Application.Abstractions.Caching;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
 namespace FurnitureShop.Infrastructure.Caching;
 
-public class CasheService
+public class CasheService : ICashService
 {
     private readonly IDistributedCache _distributedCache;
 

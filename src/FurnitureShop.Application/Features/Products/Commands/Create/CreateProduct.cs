@@ -48,16 +48,20 @@ public sealed class CreateProductCommandValidator : AbstractValidator<CreateProd
             .MaximumLength(Brand.NameMaxLength);
 
         RuleFor(x => x.Price)
-            .NotNull();
+            .NotNull()
+            .GreaterThan(0);
 
         RuleFor(x => x.Width)
-            .NotNull();
+            .NotNull()
+            .GreaterThan(0);
 
         RuleFor(x => x.Height)
-            .NotNull();
+            .NotNull()
+            .GreaterThan(0);
 
         RuleFor(x => x.Length)
-            .NotNull();
+            .NotNull()
+            .GreaterThan(0);
 
         RuleFor(x => x.Categories)
             .NotNull()
@@ -87,7 +91,7 @@ public sealed class CreateProductCommandHandler : ICommandHandler<CreateProductC
 
         if (categories is null)
         {
-            return Result.Failure(DomainErrors.Category.RangeNotFound());
+            return Result.NotFound(DomainErrors.Category.RangeNotFound());
         }
 
         Product product = Product.Create(new ProductId(Guid.NewGuid()),

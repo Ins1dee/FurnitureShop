@@ -2,7 +2,7 @@ using FurnitureShop.Application.Abstractions.Idempotency;
 using FurnitureShop.Domain.Shared;
 using MediatR;
 
-namespace FurnitureShop.Application.Abstractions.Behaviors;
+namespace FurnitureShop.Application.Behaviors;
 
 public sealed class IdempotentCommandPipelineBehavior<TRequest, TResponse> 
     : IPipelineBehavior<TRequest, TResponse>

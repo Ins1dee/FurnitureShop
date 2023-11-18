@@ -71,12 +71,12 @@ public sealed class UserRegistration : Entity<UserRegistrationId>, IAggregateRoo
     {
         if (Status == UserRegistrationStatus.Confirmed)
         {
-            return Result.Failure(DomainErrors.UserRegistration.AlreadyConfirmed());
+            return Result.BadRequest(DomainErrors.UserRegistration.AlreadyConfirmed());
         }
         
         if (!ConfirmationCode.Verify(code))
         {
-            return Result.Failure(DomainErrors.UserRegistration.InvalidOrExpiredConfirmationCode());
+            return Result.BadRequest(DomainErrors.UserRegistration.InvalidOrExpiredConfirmationCode());
         }
         
         Status = UserRegistrationStatus.Confirmed;

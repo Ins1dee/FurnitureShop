@@ -54,6 +54,8 @@ public static class DomainErrors
         public static Error InvalidPriceValue() => new("Price should be greater than 0");
 
         public static Error InvalidDimentions() => new("Dimentions values should be greater than 0");
+
+        public static Error NotFound() => new("Specified product was not found");
     }
 
     public static class Category

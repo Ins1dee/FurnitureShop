@@ -1,9 +1,9 @@
 using FurnitureShop.Application.Features.UserRegistrations.Commands.Confirm;
 using FurnitureShop.Application.Features.UserRegistrations.Commands.Create;
 using FurnitureShop.Domain.Shared;
-using FurnitureShop.WebAPI.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace FurnitureShop.WebAPI.Controllers;
 
@@ -19,7 +19,7 @@ public class RegistrationController : Controller
     }
     
     [HttpPost]
-    public async Task<IActionResult> RegisterUser(
+    public async Task<IResult> RegisterUser(
         [FromBody] RegisterUserRequest request,
         CancellationToken cancellationToken)
     {
@@ -31,12 +31,14 @@ public class RegistrationController : Controller
 
         Result<Guid> result = await _sender.Send(registrationCommand, cancellationToken);
         
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.IsSuccess 
+            ? Results.Json(result.Value, statusCode: (int)result.Status)
+            : Results.Json(result.Error, statusCode: (int)result.Status);
     }
     
     [HttpPost]
     [Route("confirm-user")]
-    public async Task<IActionResult> ConfirmUser(
+    public async Task<IResult> ConfirmUser(
         [FromBody] ConfirmUserRequest request,
         CancellationToken cancellationToken)
     {
@@ -46,6 +48,8 @@ public class RegistrationController : Controller
 
         Result result = await _sender.Send(confirmCommand, cancellationToken);
         
-        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+        return result.IsSuccess 
+            ? Results.Json(null, statusCode: (int)result.Status)
+            : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 }

@@ -16,7 +16,7 @@ public sealed class Product : Entity<ProductId>, IAggregateRoot
         Brand brand, 
         Price price, 
         Dimentions dimentions,
-        List<Category> categories) 
+        IEnumerable<Category> categories) 
         : base(id)
     {
         Name = name;
@@ -51,8 +51,25 @@ public sealed class Product : Entity<ProductId>, IAggregateRoot
         Brand brand, 
         Price price,
         Dimentions dimentions,
-        List<Category> categories)
+        IEnumerable<Category> categories)
     {
         return new Product(id, name, description, brand, price, dimentions, categories);
+    }
+
+    public void Update(
+        Name name, 
+        Description description, 
+        Brand brand, 
+        Price price, 
+        Dimentions dimentions, 
+        IEnumerable<Category> categories)
+    {
+        Name = name;
+        Description = description;
+        Brand = brand;
+        Price = price;
+        Dimentions = dimentions;
+        _categories.Clear();
+        _categories.AddRange(categories);
     }
 }

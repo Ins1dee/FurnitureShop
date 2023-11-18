@@ -1,4 +1,4 @@
-namespace FurnitureShop.Application.Abstractions.Behaviors;
+namespace FurnitureShop.Application.Behaviors;
 
 public class ValidationException : Exception
 {

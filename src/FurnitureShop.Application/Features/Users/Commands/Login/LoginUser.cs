@@ -49,7 +49,7 @@ public sealed class LoginUserCommandhandler : ICommandHandler<LoginUserCommand, 
 
         if (user is null || !user.PasswordHash.Verify(request.Password))
         {
-            return Result.Failure<LoginResponse>(DomainErrors.User.InvalidCredentials());
+            return Result.BadRequest<LoginResponse>(DomainErrors.User.InvalidCredentials());
         }
 
         Domain.Entities.RefreshSessions.RefreshSession refreshSession = user.CreateRefreshSession();

@@ -41,7 +41,7 @@ public sealed class ConfirmUserRegistrationCommandHandler : ICommandHandler<Conf
 
         if (userRegistration is null)
         {
-            return Result.Failure(DomainErrors.UserRegistration.NotFound());
+            return Result.NotFound(DomainErrors.UserRegistration.NotFound());
         }
 
         Result confirmationResult = userRegistration.Confirm(request.ConfirmationCode);
@@ -49,7 +49,7 @@ public sealed class ConfirmUserRegistrationCommandHandler : ICommandHandler<Conf
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
         return confirmationResult.IsFailure 
-            ? Result.Failure(confirmationResult.Error) 
+            ? confirmationResult
             : Result.Success();
     }
 }

@@ -1,6 +1,6 @@
 using System.Reflection;
 using FluentValidation;
-using FurnitureShop.Application.Abstractions.Behaviors;
+using FurnitureShop.Application.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FurnitureShop.Application;

@@ -1,4 +1,4 @@
-namespace FurnitureShop.WebAPI.Requests;
+namespace FurnitureShop.Application.Features.Users.Commands.Login;
 
 public record LoginUserRequest(
     string Email,

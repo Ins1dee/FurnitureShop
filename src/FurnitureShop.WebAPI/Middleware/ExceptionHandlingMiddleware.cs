@@ -1,4 +1,4 @@
-using FurnitureShop.Application.Abstractions.Behaviors;
+using FurnitureShop.Application.Behaviors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FurnitureShop.WebAPI.Middleware;

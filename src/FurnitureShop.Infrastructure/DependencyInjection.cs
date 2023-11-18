@@ -1,7 +1,9 @@
 using FurnitureShop.Application.Abstractions;
+using FurnitureShop.Application.Abstractions.Caching;
 using FurnitureShop.Application.Abstractions.Idempotency;
 using FurnitureShop.Infrastructure.Authentication;
 using FurnitureShop.Infrastructure.Caching;
+using FurnitureShop.Infrastructure.Mapping;
 using FurnitureShop.Infrastructure.OptionSetup;
 using FurnitureShop.Infrastructure.Services.Email;
 using FurnitureShop.Infrastructure.Services.Idempotency;
@@ -21,6 +23,8 @@ public static class DependencyInjection
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IIdempotencyService, IdempotencyService>();
         services.AddSingleton<CasheService>();
+        services.AddSingleton<ICashService, CasheService>();
+        services.AddSingleton<IMapper, Mapper>();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();

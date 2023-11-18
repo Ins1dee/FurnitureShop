@@ -30,7 +30,7 @@ public sealed class RefreshSessionCommandhandler : ICommandHandler<RefreshSessio
 
         if (updateResult.IsFailure)
         {
-            return Result.Failure<RefreshSessionResponse>(updateResult.Error);
+            return Result.BadRequest<RefreshSessionResponse>(updateResult.Error);
         }
         
         _sessionService.DeleteCurrentSessionFromCookies();

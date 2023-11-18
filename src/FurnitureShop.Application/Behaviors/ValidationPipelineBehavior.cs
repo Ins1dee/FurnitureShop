@@ -3,7 +3,7 @@ using FurnitureShop.Application.Abstractions.Messaging;
 using FurnitureShop.Domain.Shared;
 using MediatR;
 
-namespace FurnitureShop.Application.Abstractions.Behaviors;
+namespace FurnitureShop.Application.Behaviors;
 
 public class ValidationPipelineBehavior<TRequst, TResponce> : IPipelineBehavior<TRequst, TResponce>
     where TRequst : ICommandBase
