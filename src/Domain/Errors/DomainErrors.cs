@@ -62,4 +62,9 @@ public static class DomainErrors
     {
         public static Error RangeNotFound() => new("Some of categories were not found");
     }
+
+    public static class Order
+    {
+        public static Error InvalidQuantity() => new("Quantity should be greater than 0");
+    }
 }
