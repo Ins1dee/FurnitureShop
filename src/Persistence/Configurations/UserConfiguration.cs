@@ -11,19 +11,18 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        builder.ToTable("Users");
-        
         builder.HasKey(user => user.Id);
         
-        builder.Property(userRegistration => userRegistration.Id)
+        builder.Property(user => user.Id)
             .HasConversion(
-                userRegistrationId => userRegistrationId.Value,
+                userId => userId.Value,
                 value => new UserId(value));
         
         builder.OwnsOne(user => user.FullName, name =>
         {
             name.Property(name => name.Firstname)
                 .HasColumnName("FirstName");
+            
             name.Property(name => name.Lastname)
                 .HasColumnName("LastName");
         });
@@ -73,5 +72,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
             
             refreshSession.HasKey(refreshSession => refreshSession.Id);
         });
+
+        builder.HasMany(user => user.Orders)
+            .WithOne(order => order.User)
+            .HasForeignKey(order => order.UserId);
     }
 }

@@ -5,6 +5,7 @@ using Application.Features.Products.Commands.Update;
 using Application.Features.Products.Queries.Get;
 using Domain.Shared;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
@@ -12,6 +13,7 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/products")]
+[Authorize(Roles = "Administrator")]
 public class ProductController : Controller
 {
     private readonly ISender _sender;
@@ -51,6 +53,7 @@ public class ProductController : Controller
             : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 
+    [AllowAnonymous]
     [HttpGet]
     public async Task<IResult> GetProducts(CancellationToken cancellationToken)
     {

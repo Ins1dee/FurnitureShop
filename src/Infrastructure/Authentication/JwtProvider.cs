@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Application.Abstractions;
+using Domain.Entities.Roles;
 using Domain.Entities.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -19,11 +20,16 @@ public sealed class JwtProvider : IJwtProvider
 
     public string Generate(User user)
     {
-        var claims = new Claim[]
+        var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.Value.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email.Value)
         };
+        
+        foreach (Role userRole in user.Roles)
+        {
+            claims.Add(new Claim(ClaimTypes.Role, userRole.Id.Value));
+        }
         
         SigningCredentials credentials = new(
             new SymmetricSecurityKey(

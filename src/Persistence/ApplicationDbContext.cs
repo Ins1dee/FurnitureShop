@@ -1,6 +1,7 @@
 using Application.Abstractions;
 using Domain.Abstractions;
 using Domain.Entities.Categories;
+using Domain.Entities.Orders;
 using Domain.Entities.Products;
 using Domain.Entities.UserRegistrations;
 using Domain.Entities.Users;
@@ -26,6 +27,8 @@ public class ApplicationDbContext : DbContext, IUnitOfWork
     public DbSet<Product> Products { get; set; }
     
     public DbSet<Category> Categories { get; set; }
+    
+    public DbSet<Order> Orders { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -1,5 +1,6 @@
 using Application.Abstractions;
 using Domain.Entities.Categories;
+using Domain.Entities.Orders;
 using Domain.Entities.Products;
 using Domain.Entities.UserRegistrations;
 using Domain.Entities.Users;
@@ -28,6 +29,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
         
         return services;
     }

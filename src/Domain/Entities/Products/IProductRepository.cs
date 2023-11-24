@@ -7,6 +7,8 @@ public interface IProductRepository
     Task<List<Product>> GetAsync(CancellationToken cancellationToken = default);
 
     Task<Product?> GetByIdAsync(ProductId id, CancellationToken cancellationToken = default);
+    
+    Task<List<Product>?> GetRangeById(List<ProductId> ids, CancellationToken cancellationToken = default);
 
     void Delete(Product product);
 }

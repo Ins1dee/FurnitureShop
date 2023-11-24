@@ -1,5 +1,4 @@
 using Application.Abstractions;
-using Application.Abstractions.Caching;
 using Application.Abstractions.Messaging;
 using Domain.Entities.Products;
 using Domain.Shared;
@@ -12,30 +11,19 @@ public sealed class GetProductQueryHandler : IQueryHandler<GetProductsQuery, Lis
 {
     private readonly IProductRepository _productRepository;
     private readonly IMapper _mapper;
-    private readonly ICashService _cashService;
 
-    public GetProductQueryHandler(IProductRepository productRepository, IMapper mapper, ICashService cashService)
+    public GetProductQueryHandler(IProductRepository productRepository, IMapper mapper)
     {
         _productRepository = productRepository;
         _mapper = mapper;
-        _cashService = cashService;
     }
 
     public async Task<Result<List<ProductResponse>>> Handle(
         GetProductsQuery request, 
         CancellationToken cancellationToken)
     {
-        var productResponses = await _cashService.GetAsync<List<ProductResponse>>("products", cancellationToken);
-
-        if (productResponses is not null)
-        {
-            return productResponses;
-        }
-        
         var products = await _productRepository.GetAsync(cancellationToken);
-        productResponses = _mapper.Map<List<ProductResponse>>(products);
-
-        await _cashService.SetAsync("products", productResponses, cancellationToken);
+        var productResponses = _mapper.Map<List<ProductResponse>>(products);
 
         return productResponses;
     }

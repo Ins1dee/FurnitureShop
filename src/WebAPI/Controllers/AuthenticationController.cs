@@ -1,5 +1,5 @@
 using Application.Features.Users.Commands.Login;
-using Application.Features.Users.Commands.RefreshSession;
+using Application.Features.Users.Commands.RefreshCurrentSession;
 using Domain.Shared;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

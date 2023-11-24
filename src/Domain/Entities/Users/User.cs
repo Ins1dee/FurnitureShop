@@ -1,4 +1,5 @@
 using Domain.Abstractions;
+using Domain.Entities.Orders;
 using Domain.Entities.RefreshSessions;
 using Domain.Entities.Roles;
 using Domain.Entities.UserRegistrations;
@@ -13,6 +14,8 @@ public sealed class User : Entity<UserId>, IAggregateRoot
     private readonly List<Role> _roles = new();
 
     private readonly List<RefreshSession> _refreshSessions = new();
+
+    private readonly List<Order> _orders = new();
     
     private User(
         UserId id,
@@ -42,6 +45,8 @@ public sealed class User : Entity<UserId>, IAggregateRoot
     public IReadOnlyList<Role> Roles => _roles;
 
     public IReadOnlyList<RefreshSession> RefreshSessions => _refreshSessions;
+
+    public IReadOnlyList<Order> Orders => _orders;
 
     public static User CreateFromUserRegistration(
         UserRegistrationId id,

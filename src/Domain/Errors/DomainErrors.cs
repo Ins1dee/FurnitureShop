@@ -42,6 +42,7 @@ public static class DomainErrors
         public static Error InvalidRefreshToken() => new("Refresh token is invalid");
 
         public static Error RefreshSessionExpired() => new("Refresh token expired");
+        public static Error Unauthorized() => new("User is not authorized");
     }
 
     public static class Email
@@ -56,6 +57,8 @@ public static class DomainErrors
         public static Error InvalidDimentions() => new("Dimentions values should be greater than 0");
 
         public static Error NotFound() => new("Specified product was not found");
+
+        public static Error RangeNotFound() => new("Some of products were not found");
     }
 
     public static class Category
@@ -66,5 +69,9 @@ public static class DomainErrors
     public static class Order
     {
         public static Error InvalidQuantity() => new("Quantity should be greater than 0");
+
+        public static Error InvalidTotalAmount() => new("Total amount should be greater than 0");
+
+        public static Error NotFound() => new("Specified order was not found");
     }
 }

@@ -19,13 +19,18 @@ public class SessionService : ISessionService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<User> GetLoggedInUserAsync()
+    public async Task<User?> GetLoggedInUserAsync(CancellationToken cancellationToken = default)
     {
         var email = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.Email);
 
-        return (email is not null
-            ? await _userRepository.GetByEmailAsync(email)
-            : null)!;
+        if (email is null)
+        {
+            return null;
+        }
+        
+        User? user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+
+        return user;
     }
 
     public void SetSessionInCookies(RefreshSession refreshSession)

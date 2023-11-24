@@ -35,6 +35,8 @@ public class Result : IResult
     
     public static Result NotFound(Error error) => new(false, error, ResultStatus.NotFound);
     
+    public static Result Unauthorized(Error error) => new(false, error, ResultStatus.Unauthorized);
+    
     protected static Result<TValue> Success<TValue>(TValue value) 
         => new(value, true, Error.None, ResultStatus.Ok);
 
@@ -46,6 +48,9 @@ public class Result : IResult
     
     public static Result<TValue> NotFound<TValue>(Error error) 
         => new(default, false, error, ResultStatus.NotFound);
+    
+    public static Result<TValue> Unauthorized<TValue>(Error error) 
+        => new(default, false, error, ResultStatus.Unauthorized);
 
     public static IResult IdempotencyResult() => new Result(true, Error.None, ResultStatus.Ok);
 }
@@ -82,5 +87,6 @@ public enum ResultStatus
     Ok = 200,
     BadRequest = 400,
     Forbidden = 403,
-    NotFound = 404
+    NotFound = 404,
+    Unauthorized = 401
 }

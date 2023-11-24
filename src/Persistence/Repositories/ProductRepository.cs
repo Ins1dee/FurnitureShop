@@ -22,6 +22,17 @@ internal sealed class ProductRepository
             .Include(p => p.Categories)
             .SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
 
+    public async Task<List<Product>?> GetRangeById(List<ProductId> ids, CancellationToken cancellationToken = default)
+    {
+        var products = await DbContext.Products
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync(cancellationToken);
+        
+        return ids.All(inputId => ids.Any(id => id == inputId)) 
+            ? products 
+            : null;
+    }
+
     public void Delete(Product product)
     {
         DbContext.Products.Remove(product);

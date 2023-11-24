@@ -1,10 +1,11 @@
 using Application.Abstractions;
 using Application.Abstractions.Messaging;
-using Application.Abstractions.Idempotency;
+using Domain.Entities.RefreshSessions;
 using Domain.Entities.Users;
+using Domain.Errors;
 using Domain.Shared;
 
-namespace Application.Features.Users.Commands.RefreshSession;
+namespace Application.Features.Users.Commands.RefreshCurrentSession;
 
 public sealed record RefreshSessionCommand() : ICommand<RefreshSessionResponse>;
 
@@ -23,10 +24,17 @@ public sealed class RefreshSessionCommandhandler : ICommandHandler<RefreshSessio
 
     public async Task<Result<RefreshSessionResponse>> Handle(RefreshSessionCommand request, CancellationToken cancellationToken)
     {
-        User user = await _sessionService.GetLoggedInUserAsync();
+        User? user = await _sessionService.GetLoggedInUserAsync();
+
+        if (user is null)
+        {
+            return Result.Unauthorized<RefreshSessionResponse>(DomainErrors.User.Unauthorized());
+        }
+        
         var refreshToken = _sessionService.GetCurrentSessionFromCookies();
 
-        Result<Domain.Entities.RefreshSessions.RefreshSession> updateResult = user.UpdateRefreshSession(refreshToken);
+        Result<RefreshSession> updateResult = user
+            .UpdateRefreshSession(refreshToken);
 
         if (updateResult.IsFailure)
         {
