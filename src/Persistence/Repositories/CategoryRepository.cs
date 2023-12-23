@@ -23,4 +23,15 @@ internal sealed class CategoryRepository
             ? categories 
             : null;
     }
+
+    public async Task<bool> IsNameUniqueAsync(string name, CancellationToken cancellationToken = default)
+    {
+        return !await DbContext.Categories.AnyAsync(
+            category => category.Name == Name.Create(name), cancellationToken);
+    }
+
+    public void AddAsync(Category category, CancellationToken cancellationToken = default)
+    {
+        DbContext.Categories.AddAsync(category, cancellationToken);
+    }
 }

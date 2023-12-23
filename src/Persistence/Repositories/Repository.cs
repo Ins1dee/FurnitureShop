@@ -19,6 +19,12 @@ internal abstract class Repository<TEntity, TEntityId>
         return await DbContext.Set<TEntity>()
             .SingleOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
     }
+    
+    public virtual async Task<List<TEntity>> GetAsync(CancellationToken cancellationToken = default)
+    {
+        return await DbContext.Set<TEntity>()
+            .ToListAsync(cancellationToken);
+    }
 
     public async Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
@@ -28,5 +34,10 @@ internal abstract class Repository<TEntity, TEntityId>
     public void Update(TEntity entity)
     {
         DbContext.Set<TEntity>().Update(entity);
+    }
+
+    public void Delete(TEntity entity)
+    {
+        DbContext.Set<TEntity>().Remove(entity);
     }
 }

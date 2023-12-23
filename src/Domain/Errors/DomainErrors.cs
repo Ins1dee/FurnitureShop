@@ -64,6 +64,8 @@ public static class DomainErrors
     public static class Category
     {
         public static Error RangeNotFound() => new("Some of categories were not found");
+
+        public static Error NotFound() => new("Such category were not found");
     }
 
     public static class Order

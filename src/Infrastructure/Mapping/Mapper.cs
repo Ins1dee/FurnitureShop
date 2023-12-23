@@ -24,6 +24,7 @@ public partial class Mapper : IMapper
     
     private partial List<OrderDetailResponse> MapOrderDetailRepsonses(List<OrderDetail> orders);
     
+    [MapProperty("Id.Value", "Id")]
     [MapProperty("Name.Value", "Name")]
     [MapProperty("Description.Value", "Description")]
     [MapProperty("Brand.Company", "BrandCompany")]
@@ -34,6 +35,7 @@ public partial class Mapper : IMapper
     [MapProperty("Dimentions.Length", "Length")]
     private partial ProductResponse MapProductResponse(Product product);
 
+    [MapProperty("Id.Value", "Id")]
     [MapProperty("Name.Value", "Name")]
     private partial CategoryResponse MapCategoryResponse(Category category);
 

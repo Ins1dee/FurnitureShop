@@ -21,6 +21,10 @@ public sealed class LoginUserCommandValidator : AbstractValidator<LoginUserComma
             .NotNull()
             .NotEmpty()
             .EmailAddress();
+
+        RuleFor(x => x.Password)
+            .NotNull()
+            .NotEmpty();
     }
 }
 

@@ -10,7 +10,7 @@ internal sealed class ProductRepository
     {
     }
 
-    public async Task<List<Product>> GetAsync(CancellationToken cancellationToken = default) =>
+    public override async Task<List<Product>> GetAsync(CancellationToken cancellationToken = default) =>
         await DbContext.Products
             .Include(p => p.Categories)
             .ToListAsync(cancellationToken);
@@ -20,7 +20,7 @@ internal sealed class ProductRepository
         CancellationToken cancellationToken = default) =>
         await DbContext.Products
             .Include(p => p.Categories)
-            .SingleOrDefaultAsync(p => p.Id == id, cancellationToken);
+            .SingleOrDefaultAsync(p => p.Id == id, cancellationToken: cancellationToken);
 
     public async Task<List<Product>?> GetRangeById(List<ProductId> ids, CancellationToken cancellationToken = default)
     {
@@ -31,10 +31,5 @@ internal sealed class ProductRepository
         return ids.All(inputId => ids.Any(id => id == inputId)) 
             ? products 
             : null;
-    }
-
-    public void Delete(Product product)
-    {
-        DbContext.Products.Remove(product);
     }
 }

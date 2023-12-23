@@ -26,7 +26,7 @@ public class ProductController : Controller
     [HttpPost]
     public async Task<IResult> CreateProduct(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
-        [FromBody] CreateProductRequest request,
+        [FromBody] ProductRequest request,
         CancellationToken cancellationToken)
     {
         if (!Guid.TryParse(requestId, out Guid parsedRequestId))
@@ -68,12 +68,12 @@ public class ProductController : Controller
 
     [HttpPut]
     public async Task<IResult> UpdateProduct(
-        [FromQuery] Guid productToDeleteId,
-        [FromBody] UpdateProductRequest request,
+        [FromQuery] Guid productToUpdateId,
+        [FromBody] ProductRequest request,
         CancellationToken cancellationToken)
     {
         UpdateProductCommand updateCommand = new(
-            productToDeleteId,
+            productToUpdateId,
             request.Name,
             request.Description,
             request.BrandCompany,

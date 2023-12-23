@@ -1,3 +1,3 @@
 namespace Application.Features.Categories;
 
-public sealed record CategoryResponse(string Name);
+public sealed record CategoryResponse(Guid Id, string Name);

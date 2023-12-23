@@ -1,6 +1,6 @@
-namespace Application.Features.Products.Commands.Create;
+namespace Application.Features.Products;
 
-public record CreateProductRequest(
+public record ProductRequest(
     string Name,
     string Description,
     string BrandCompany,

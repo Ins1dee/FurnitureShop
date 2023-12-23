@@ -10,7 +10,7 @@ public sealed class Category : Entity<CategoryId>, IAggregateRoot
 
     private Category(
         CategoryId id,
-        Name name) 
+        Name name)
         : base(id)
     {
         Name = name;
@@ -20,8 +20,18 @@ public sealed class Category : Entity<CategoryId>, IAggregateRoot
     {
         // For EF Core
     }
-    
+
     public Name Name { get; private set; }
 
     public IReadOnlyList<Product> Products => _products;
+
+    public static Category Create(CategoryId id, Name name)
+    {
+        return new Category(id, name);
+    }
+
+    public void Update(Name name)
+    {
+        Name = name;
+    }
 }
