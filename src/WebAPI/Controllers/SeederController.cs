@@ -21,6 +21,11 @@ public class SeederController : Controller
     public async Task<IResult> Seed()
     {
         await _seeder.SeedAsync();
+        await _seeder.SeedIncomesAsync();
+        await _seeder.GetUserFromJson("users.json");
+        await _seeder.GetSuppliersFromJson("suppliers.json");
+        await _seeder.GetWarehousesFromJson("warehouses.json");
+
         return Results.Ok();
     }
 }

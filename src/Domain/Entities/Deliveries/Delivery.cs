@@ -1,6 +1,8 @@
 ﻿using Domain.Abstractions;
 using Domain.Entities.Orders;
 using Domain.Entities.Users;
+using Domain.Errors;
+using Domain.Shared;
 using Domain.Shared.ValueObjects;
 
 namespace Domain.Entities.Deliveries;
@@ -11,18 +13,20 @@ public class Delivery : Entity<DeliveryId>, IAggregateRoot
         DeliveryId id, 
         OrderId orderId, 
         DateTime createdAtUtc, 
-        DateTime arrivesAtc, 
+        DateTime arrivesAtUtc, 
         bool delivered, 
         Order? order, 
-        Location address) 
+        Location address, 
+        Amount cost) 
         : base(id)
     {
         OrderId = orderId;
         CreatedAtUtc = createdAtUtc;
-        ArrivesAtc = arrivesAtc;
+        ArrivesAtUtc = arrivesAtUtc;
         Delivered = delivered;
         Order = order;
         Address = address;
+        Cost = cost;
     }
 
     public Delivery()
@@ -36,9 +40,11 @@ public class Delivery : Entity<DeliveryId>, IAggregateRoot
 
     public DateTime CreatedAtUtc { get; private set; }
 
-    public DateTime ArrivesAtc { get; private set; }
+    public DateTime ArrivesAtUtc { get; private set; }
 
     public Location Address { get; private set; }
+
+    public Amount Cost { get; private set; }
 
     public bool Delivered { get; private set; }
 
@@ -50,11 +56,11 @@ public class Delivery : Entity<DeliveryId>, IAggregateRoot
     {
         OrderId = orderId;
         CreatedAtUtc = createdAtUtc;
-        ArrivesAtc = arriesAtUtc;
+        ArrivesAtUtc = arriesAtUtc;
         Delivered = delivered;
     }
 
-    public static Delivery Create(OrderId orderId, Location address)
+    public static Delivery Create(OrderId orderId, Location address, Amount cost)
     {
         return new Delivery(
             new DeliveryId(Guid.NewGuid()),
@@ -63,11 +69,18 @@ public class Delivery : Entity<DeliveryId>, IAggregateRoot
             DateTime.UtcNow.AddDays(3), 
             false,
             null,
-            address);
+            address,
+            cost);
     }
 
-    public void AttachToUser(UserId userId)
+    public Result AttachToUser(UserId userId)
     {
+        if (UserId is not null || Delivered)
+        {
+            return Result.BadRequest(DomainErrors.Delivery.CantAttach());
+        }
         UserId = userId;
+
+        return Result.Success();
     }
 }

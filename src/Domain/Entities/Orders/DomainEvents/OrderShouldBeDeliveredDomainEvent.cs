@@ -7,4 +7,5 @@ namespace Domain.Entities.Orders.DomainEvents;
 public sealed record OrderShouldBeDeliveredDomainEvent(
     Guid Id,
     OrderId OrderId,
-    Location Address) : DomainEvent(Id);
+    Location Address,
+    Amount Cost) : DomainEvent(Id);

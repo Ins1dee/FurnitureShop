@@ -5,6 +5,7 @@ using Domain.Errors;
 using Domain.Shared;
 using Domain.Shared.ValueObjects;
 using FluentValidation;
+using Serilog;
 
 namespace Application.Features.Categories.Commands.Update;
 
@@ -26,11 +27,16 @@ public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategor
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger _logger;
 
-    public UpdateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public UpdateCategoryCommandHandler(
+        ICategoryRepository categoryRepository, 
+        IUnitOfWork unitOfWork, 
+        ILogger logger)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
@@ -41,11 +47,17 @@ public sealed class UpdateCategoryCommandHandler : ICommandHandler<UpdateCategor
 
         if (category is null)
         {
+            _logger.Error($"An error occured tryng to update category with id {request.CategoryToUpdateId}. " +
+                          $"Error message: {DomainErrors.Category.NotFound()}. " +
+                          $"Status code: 404");
+
             return Result.NotFound(DomainErrors.Category.NotFound());
         }
         
         category.Update(Name.Create(request.Name));
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.Information($"Category with id {category.Id.Value} was successfully updated, status code: 200");
 
         return Result.Success();
     }

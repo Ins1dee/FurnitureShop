@@ -13,7 +13,6 @@ namespace WebAPI.Controllers;
 
 [ApiController]
 [Route("api/products")]
-//[Authorize(Roles = "Administrator")]
 public class ProductController : Controller
 {
     private readonly ISender _sender;
@@ -23,6 +22,7 @@ public class ProductController : Controller
         _sender = sender;
     }
 
+    [Authorize(Roles = "Administrator")]
     [HttpPost]
     public async Task<IResult> CreateProduct(
         [FromHeader(Name = "X-Idempotency-Key")] string requestId,
@@ -53,7 +53,7 @@ public class ProductController : Controller
             : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 
-    [AllowAnonymous]
+    [Authorize]
     [HttpGet]
     public async Task<IResult> GetProducts(CancellationToken cancellationToken)
     {
@@ -66,6 +66,7 @@ public class ProductController : Controller
             : Results.Json(result.Error, statusCode: (int)result.Status);
     }
 
+    [Authorize(Roles = "Administrator")]
     [HttpPut]
     public async Task<IResult> UpdateProduct(
         [FromQuery] Guid productToUpdateId,
@@ -90,7 +91,8 @@ public class ProductController : Controller
             ? Results.Json(null, statusCode: (int)result.Status)
             : Results.Json(result.Error, statusCode: (int)result.Status);
     }
-    
+
+    [Authorize(Roles = "Administrator")]
     [HttpDelete]
     public async Task<IResult> DeleteProduct(
         [FromQuery] Guid productToDeleteId,

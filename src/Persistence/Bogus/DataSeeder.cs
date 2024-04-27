@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Bogus.Bson;
 using Domain.Entities.Categories;
 using Domain.Entities.Deliveries;
 using Domain.Entities.Orders;
@@ -125,7 +126,7 @@ public class DataSeeder : IDataSeeder
         UserFaker userFaker = new();
         var users = new List<User>();
 
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 500; i++)
         {
             var user = userFaker.Generate();
             await _userRepository.AddAsync(user);
@@ -134,10 +135,10 @@ public class DataSeeder : IDataSeeder
         }
 
         OrderFaker orderFaker = new(users);
-        var orders = orderFaker.Generate(3000);
+        var orders = orderFaker.Generate(50);
 
         OrderDetailFaker orderDetailFaker = new(orders, products);
-        var orderDetails = orderDetailFaker.Generate(6000);
+        var orderDetails = orderDetailFaker.Generate(1000);
 
         foreach (var order in orders)
         {
@@ -147,7 +148,7 @@ public class DataSeeder : IDataSeeder
         }
 
         DeliveryFaker deliveryFaker = new(orders);
-        var deliveries = deliveryFaker.Generate(3000);
+        var deliveries = deliveryFaker.Generate(50);
 
         for (int i = 0; i < deliveries.Count; i++)
         {
@@ -171,7 +172,7 @@ public class DataSeeder : IDataSeeder
         await _unitOfWork.SaveChangesAsync();
     }
 
-    public async Task SeedIncomes()
+    public async Task SeedIncomesAsync()
     {
         var orders = await _orderRepository.GetAllAsync();
         IncomeFaker incomeFaker = new(orders);
@@ -190,5 +191,56 @@ public class DataSeeder : IDataSeeder
         }
 
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    public async Task GetUserFromJson(string path)
+    {
+        if (File.Exists(path))
+        {
+            string json = await File.ReadAllTextAsync(path);
+
+            var userList = JsonConvert.DeserializeObject<List<User>>(json);
+
+            if (userList != null)
+            {
+                await _userRepository.AddRangeAsync(userList);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
+    }
+
+    public async Task GetWarehousesFromJson(string path)
+    {
+        if (File.Exists(path))
+        {
+            string json = await File.ReadAllTextAsync(path);
+
+            var warehouseList = JsonConvert.DeserializeObject<List<Warehouse>>(json);
+
+            if (warehouseList != null)
+            {
+                await _warehouseRepository.AddRangeAsync(warehouseList);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
+    }
+
+    public async Task GetSuppliersFromJson(string path)
+    {
+        if (File.Exists(path))
+        {
+            string json = await File.ReadAllTextAsync(path);
+
+            var supplierList = JsonConvert.DeserializeObject<List<Supplier>>(json);
+
+            if (supplierList != null)
+            {
+                await _supplierRepository.AddRangeAsync(supplierList);
+
+                await _unitOfWork.SaveChangesAsync();
+            }
+        }
     }
 }

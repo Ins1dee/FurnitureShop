@@ -39,4 +39,9 @@ public sealed record FullName
 
         return new FullName(firstname, lastname);
     }
+
+    public override string ToString()
+    {
+        return $"{Firstname} {Lastname}";
+    }
 }

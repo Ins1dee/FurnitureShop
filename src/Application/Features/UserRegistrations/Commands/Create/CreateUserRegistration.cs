@@ -3,8 +3,10 @@ using Application.Abstractions.Messaging;
 using Domain.Entities.Roles;
 using FluentValidation;
 using Domain.Entities.UserRegistrations;
+using Domain.Errors;
 using Domain.Shared;
 using Domain.Shared.ValueObjects;
+using Serilog;
 
 namespace Application.Features.UserRegistrations.Commands.Create;
 
@@ -53,13 +55,16 @@ internal sealed class CreateUserRegistrationCommandHandler : ICommandHandler<Cre
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRegistrationRepository _userRegistrationRepository;
+    private readonly ILogger _logger;
 
     public CreateUserRegistrationCommandHandler(
         IUnitOfWork unitOfWork, 
-        IUserRegistrationRepository userRegistrationRepository)
+        IUserRegistrationRepository userRegistrationRepository, 
+        ILogger logger)
     {
         _unitOfWork = unitOfWork;
         _userRegistrationRepository = userRegistrationRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Guid>> Handle(CreateUserRegistrationCommand request, CancellationToken cancellationToken)
@@ -68,6 +73,10 @@ internal sealed class CreateUserRegistrationCommandHandler : ICommandHandler<Cre
 
         if (roleResult.IsFailure)
         {
+            _logger.Error($"An error occured tryng to create user registration. " +
+                          $"Error message: {roleResult.Error.Message}. " +
+                          $"Status code: 404");
+
             return Result.NotFound<Guid>(roleResult.Error);
         }
 
@@ -80,6 +89,9 @@ internal sealed class CreateUserRegistrationCommandHandler : ICommandHandler<Cre
 
         await _userRegistrationRepository.AddAsync(userRegistration, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.Information($"New user registration with id {userRegistration.Id.Value} was successfully created, " +
+                            $"status code: 200");
         
         return userRegistration.Id.Value;
     }

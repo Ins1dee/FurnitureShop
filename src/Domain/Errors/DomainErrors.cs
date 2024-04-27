@@ -81,4 +81,12 @@ public static class DomainErrors
     {
         public static Error NotFound() => new("Specified role was not found");
     }
+
+    public static class Delivery
+    {
+        public static Error NotFound() => new("Delivery with such id was not found");
+
+        public static Error CantAttach() => new("Cant attach to this delivery because it " +
+                                                "is already attached to another user or is delivered");
+    }
 }

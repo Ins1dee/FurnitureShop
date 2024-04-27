@@ -3,6 +3,11 @@
 using Application;
 using Infrastructure;
 using Persistence;
+using Serilog;
+using Serilog.Configuration;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 using WebAPI.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +19,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options => options.AddPolicy("Front", policy =>
+{
+    policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+}));
+
 builder.Services
     .AddPersistence(builder.Configuration)
-    .AddInfrastructure()
-    .AddApplication();
+    .AddInfrastructure(builder.Configuration)
+    .AddApplication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -35,6 +45,10 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<UserLoggingMiddleware>();
+
+app.UseCors("Front");
 
 app.MapControllers();
 

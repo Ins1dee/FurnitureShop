@@ -35,7 +35,6 @@ public sealed class UserFaker: Faker<User>
         RuleFor(u => u.Id, f => new UserId(f.Random.Guid()));
         RuleFor(u => u.Email, f => Email.Create(f.Person.Email));
         RuleFor(u => u.FullName, f => FullName.Create(f.Person.FirstName, f.Person.LastName)); 
-        //RuleFor(u => u.PasswordHash, (_, context) => PasswordHash.Hash(context.Email.Value));
         RuleFor(u => u.PasswordHash, PasswordHash.Hash("Password@1"));
     }
 }

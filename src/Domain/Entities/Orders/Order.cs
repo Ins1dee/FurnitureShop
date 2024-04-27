@@ -106,7 +106,8 @@ public sealed class Order : Entity<OrderId>, IAggregateRoot
                 new OrderShouldBeDeliveredDomainEvent(
                     Guid.NewGuid(),
                     id,
-                    Location.Create(address)));
+                    Location.Create(address),
+                    Amount.Create(orderDetails.Count * 5)));
         }
 
         return order;

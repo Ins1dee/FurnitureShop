@@ -4,6 +4,7 @@ using Domain.Entities.Categories;
 using Domain.Shared;
 using Domain.Shared.ValueObjects;
 using FluentValidation;
+using Serilog;
 
 namespace Application.Features.Categories.Commands.Create;
 
@@ -25,11 +26,16 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
 {
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger _logger;
 
-    public CreateCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
+    public CreateCategoryCommandHandler(
+        ICategoryRepository categoryRepository, 
+        IUnitOfWork unitOfWork, 
+        ILogger logger)
     {
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
@@ -38,8 +44,10 @@ public sealed class CreateCategoryCommandHandler : ICommandHandler<CreateCategor
             new CategoryId(Guid.NewGuid()), 
             Name.Create(request.Name));
 
-        _categoryRepository.AddAsync(category, cancellationToken);
+        await _categoryRepository.AddAsync(category, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.Information($"New category with id {category.Id.Value} was successfully created, status code: 200");
 
         return Result.Success();
     }

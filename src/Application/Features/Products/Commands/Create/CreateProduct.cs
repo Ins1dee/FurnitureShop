@@ -8,6 +8,7 @@ using Domain.Entities.Products.ValueObjects;
 using Domain.Errors;
 using Domain.Shared;
 using Domain.Shared.ValueObjects;
+using Serilog;
 
 namespace Application.Features.Products.Commands.Create;
 
@@ -74,15 +75,18 @@ public sealed class CreateProductCommandHandler : ICommandHandler<CreateProductC
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger _logger;
 
     public CreateProductCommandHandler(
         IProductRepository productRepository, 
         ICategoryRepository categoryRepository, 
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger logger)
     {
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(CreateProductCommand request, CancellationToken cancellationToken)
@@ -91,6 +95,9 @@ public sealed class CreateProductCommandHandler : ICommandHandler<CreateProductC
 
         if (categories is null)
         {
+            _logger.Error($"An error occured trying to create product. " +
+                          $"Error message: {DomainErrors.Category.RangeNotFound()}. " +
+                          $"Status code: 404");
             return Result.NotFound(DomainErrors.Category.RangeNotFound());
         }
 
@@ -104,7 +111,9 @@ public sealed class CreateProductCommandHandler : ICommandHandler<CreateProductC
 
         await _productRepository.AddAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-        
+
+        _logger.Information($"New product with id {product.Id.Value} was successfully created, status code: 200");
+
         return Result.Success();
     }
 }

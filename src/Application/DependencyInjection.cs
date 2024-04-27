@@ -1,13 +1,14 @@
 using System.Reflection;
 using Application.Behaviors;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddApplication(this IServiceCollection services)
+    public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMediatR(cfg =>
         {
@@ -19,7 +20,9 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        
+
+        License.LicenseKey = configuration["IronPdf:LicenseKey"];
+
         return services;
     }
 }

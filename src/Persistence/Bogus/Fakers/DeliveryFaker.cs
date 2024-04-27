@@ -12,5 +12,6 @@ public sealed class DeliveryFaker: Faker<Delivery>
         RuleFor(d => d.Id, f => new DeliveryId(f.Random.Guid()));
         RuleFor(d => d.Delivered, true);
         RuleFor(d => d.Address, f => Location.Create(f.Address.FullAddress()));
+        RuleFor(d => d.Cost, f => Amount.Create(f.Random.Double(0, 30)));
     }
 }

@@ -27,7 +27,12 @@ public sealed class DeliveryConfiguration : IEntityTypeConfiguration<Delivery>
                 address => address.Value,
                 value => Location.Create(value));
 
-        builder.Property(delivery => delivery.ArrivesAtc)
+        builder.Property(delivery => delivery.Cost)
+            .HasConversion(
+                cost => cost.Value,
+                value => Amount.Create(value));
+
+        builder.Property(delivery => delivery.ArrivesAtUtc)
             .IsRequired();
 
         builder.Property(delivery => delivery.CreatedAtUtc)

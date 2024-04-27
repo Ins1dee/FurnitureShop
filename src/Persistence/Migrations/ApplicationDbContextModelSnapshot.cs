@@ -60,8 +60,11 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ArrivesAtc")
+                    b.Property<DateTime>("ArrivesAtUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<double>("Cost")
+                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");

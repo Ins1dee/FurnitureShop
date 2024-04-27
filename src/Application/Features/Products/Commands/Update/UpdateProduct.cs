@@ -8,6 +8,7 @@ using Domain.Entities.Products.ValueObjects;
 using Domain.Errors;
 using Domain.Shared;
 using Domain.Shared.ValueObjects;
+using Serilog;
 
 namespace Application.Features.Products.Commands.Update;
 
@@ -74,15 +75,18 @@ public sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProductC
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger _logger;
 
     public UpdateProductCommandHandler(
         IProductRepository productRepository, 
         ICategoryRepository categoryRepository, 
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        ILogger logger)
     {
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -95,11 +99,19 @@ public sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProductC
         
         if (productToUpdate is null)
         {
+            _logger.Error($"Error occured trying to update product with id {request.ProductToUpdateId}. " +
+                          $"Error message: {DomainErrors.Product.NotFound()}. " +
+                          $"Status code: 404");
+
             return Result.NotFound(DomainErrors.Product.NotFound());
         }
 
         if (categories is null)
         {
+            _logger.Error($"Error occured trying to update product with id {request.ProductToUpdateId}. " +
+                          $"Error message: {DomainErrors.Category.RangeNotFound()}. " +
+                          $"Status code: 404");
+
             return Result.NotFound(DomainErrors.Category.RangeNotFound());
         }
 
@@ -112,6 +124,8 @@ public sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProductC
             categories);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.Information($"Product with id {request.ProductToUpdateId} was successfully updated, status code: 200");
 
         return Result.Success();
     }

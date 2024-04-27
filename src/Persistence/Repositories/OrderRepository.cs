@@ -24,8 +24,23 @@ internal sealed class OrderRepository : Repository<Order, OrderId>, IOrderReposi
             .ToListAsync(cancellationToken);
     }
 
+    public override async Task<Order?> GetByIdAsync(OrderId id, CancellationToken cancellationToken = default)
+    {
+        return await DbContext
+            .Orders
+            .Include(o => o.Delivery)
+            .Include(o => o.OrderDetails)
+            .ThenInclude(o => o.Product)
+            .Include(o => o.User)
+            .Where(o => o.Id == id)
+            .SingleOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<Order>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await DbContext.Orders.Include(o => o.Incomes).ToListAsync(cancellationToken: cancellationToken);
+        return await DbContext
+            .Orders
+            .Include(o => o.User)
+            .ToListAsync(cancellationToken);
     }
 }

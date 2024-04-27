@@ -20,7 +20,7 @@ public class OrderShouldBeDeliveredDomainEventHandler : INotificationHandler<Ord
 
     public async Task Handle(OrderShouldBeDeliveredDomainEvent notification, CancellationToken cancellationToken)
     {
-        var delivery = Delivery.Create(notification.OrderId, notification.Address);
+        var delivery = Delivery.Create(notification.OrderId, notification.Address, notification.Cost);
 
         await _deliveryRepository.AddAsync(delivery, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

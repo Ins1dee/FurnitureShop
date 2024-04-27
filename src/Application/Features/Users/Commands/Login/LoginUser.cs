@@ -5,6 +5,7 @@ using FluentValidation;
 using Domain.Entities.Users;
 using Domain.Errors;
 using Domain.Shared;
+using Serilog;
 
 namespace Application.Features.Users.Commands.Login;
 
@@ -34,17 +35,20 @@ public sealed class LoginUserCommandhandler : ICommandHandler<LoginUserCommand, 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtProvider _jwtProvider;
     private readonly ISessionService _sessionService;
+    private readonly ILogger _logger;
 
     public LoginUserCommandhandler(
         IUserRepository userRepository, 
         IUnitOfWork unitOfWork, 
         IJwtProvider jwtProvider, 
-        ISessionService sessionService)
+        ISessionService sessionService, 
+        ILogger logger)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _jwtProvider = jwtProvider;
         _sessionService = sessionService;
+        _logger = logger;
     }
 
     public async Task<Result<LoginResponse>> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -53,6 +57,10 @@ public sealed class LoginUserCommandhandler : ICommandHandler<LoginUserCommand, 
 
         if (user is null || !user.PasswordHash.Verify(request.Password))
         {
+            _logger.Error($"An error occured tryng to login user with email {request.Email}. " +
+                          $"Error message: {DomainErrors.User.InvalidCredentials()}. " +
+                          $"Status code: 400");
+
             return Result.BadRequest<LoginResponse>(DomainErrors.User.InvalidCredentials());
         }
 
@@ -62,6 +70,8 @@ public sealed class LoginUserCommandhandler : ICommandHandler<LoginUserCommand, 
         _sessionService.SetSessionInCookies(refreshSession);
         
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        _logger.Information($"User with email {request.Email} successfully logged in, status code: 200");
 
         return new LoginResponse(accessToken);
     }
